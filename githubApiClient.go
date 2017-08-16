@@ -11,7 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// GithubAPIClient is the interface for running kubernetes commands specific to this application
+// GithubAPIClient allows to communicate with the Github api
 type GithubAPIClient interface {
 	SetBuildStatus(string, string, string, string) error
 }
@@ -34,8 +34,8 @@ type buildStatusRequestBody struct {
 func (gh *githubAPIClientImpl) SetBuildStatus(accessToken, repoFullname, gitRevision, status string) (err error) {
 
 	// https://developer.github.com/v3/repos/statuses/
-	// estafette status: succeeded|failed
-	// github stat: success|failure|error| pending
+	// estafette status: succeeded|failed|pending
+	// github stat: success|failure|error|pending
 
 	state := "success"
 	switch status {
@@ -44,13 +44,16 @@ func (gh *githubAPIClientImpl) SetBuildStatus(accessToken, repoFullname, gitRevi
 
 	case "failed":
 		state = "failure"
+
+	case "pending":
+		state = "pending"
 	}
 
 	params := buildStatusRequestBody{
 		State: state,
 	}
 
-	_, err = callGithubAPI("POST", fmt.Sprintf("https://api.github.com/repos/%v/statuses/%v", repoFullname, gitRevision), params, "Bearer", accessToken)
+	_, err = callGithubAPI("POST", fmt.Sprintf("https://api.github.com/repos/%v/statuses/%v", repoFullname, gitRevision), params, "token", accessToken)
 
 	return
 }
