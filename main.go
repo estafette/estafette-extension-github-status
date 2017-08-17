@@ -25,6 +25,7 @@ var (
 	gitRepoFullname      = kingpin.Flag("git-repo-fullname", "The owner and repo name of the Github repository.").Envar("ESTAFETTE_GIT_NAME").Required().String()
 	gitRevision          = kingpin.Flag("git-revision", "The hash of the revision to set build status for.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
 	estafetteBuildStatus = kingpin.Flag("estafette-build-status", "The current build status of the Estafette pipeline.").Envar("ESTAFETTE_BUILD_STATUS").Required().String()
+	statusOverride       = kingpin.Flag("status-override", "Allow status property in manifest to override the actual build status.").Envar("ESTAFETTE_EXTENSION_STATUS").String()
 )
 
 func main() {
@@ -43,6 +44,7 @@ func main() {
 		Str("gitName", *gitRepoFullname).
 		Str("gitRevision", *gitRevision).
 		Str("buildStatus", *estafetteBuildStatus).
+		Str("statusOverride", *statusOverride).
 		Logger()
 
 	// use zerolog for any logs sent via standard log library
@@ -57,9 +59,15 @@ func main() {
 		Str("goVersion", goVersion).
 		Msg("Starting estafette-extension-github-status...")
 
+	// check if there's a status override
+	status := *estafetteBuildStatus
+	if *statusOverride != "" {
+		status = *statusOverride
+	}
+
 	// set build status
 	githubAPIClient := newGithubAPIClient()
-	err := githubAPIClient.SetBuildStatus(*githubAPIAccessToken, *gitRepoFullname, *gitRevision, *estafetteBuildStatus)
+	err := githubAPIClient.SetBuildStatus(*githubAPIAccessToken, *gitRepoFullname, *gitRevision, status)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Updating Github build status failed")
 	}
