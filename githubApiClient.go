@@ -74,7 +74,7 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 	// create client, in order to add headers
 	client := pester.New()
 	client.MaxRetries = 3
-	client.Backoff = pester.ExponentialBackoff
+	client.Backoff = pester.ExponentialJitterBackoff
 	client.KeepLog = true
 	request, err := http.NewRequest(method, url, requestBody)
 	if err != nil {
