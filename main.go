@@ -33,18 +33,9 @@ func main() {
 	// parse command line parameters
 	kingpin.Parse()
 
-	// log as severity for stackdriver logging to recognize the level
-	zerolog.LevelFieldName = "severity"
-
-	// set some default fields added to all logs
-	log.Logger = zerolog.New(os.Stdout).With().
+	// pretty print to make build logs more readable
+	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().
 		Timestamp().
-		Str("app", "estafette-extension-github-status").
-		Str("version", version).
-		Str("gitName", *gitRepoFullname).
-		Str("gitRevision", *gitRevision).
-		Str("buildStatus", *estafetteBuildStatus).
-		Str("statusOverride", *statusOverride).
 		Logger()
 
 	// use zerolog for any logs sent via standard log library
