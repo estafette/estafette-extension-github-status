@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/rs/zerolog/log"
+	"github.com/sethgrid/pester"
 )
 
 // GithubAPIClient allows to communicate with the Github api
@@ -71,7 +72,10 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 	}
 
 	// create client, in order to add headers
-	client := &http.Client{}
+	client := pester.New()
+	client.MaxRetries = 3
+	client.Backoff = pester.ExponentialBackoff
+	client.KeepLog = true
 	request, err := http.NewRequest(method, url, requestBody)
 	if err != nil {
 		return
