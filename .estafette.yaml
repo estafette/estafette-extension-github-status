@@ -49,8 +49,7 @@ pipelines:
 
   slack-notify:
     image: extensions/slack-build-status:dev
-    env:
-      ESTAFETTE_SLACK_WEBHOOK: estafette.secret(fI3-FVVuCISewUB7.us1witAljV1RkjZ23G17KVLzBBzfwT0mJ24ORfjAFs7aJElUy9iQ_9nvO5CQnBG8WgT5YQ5l4N6c3vLZTc3zKDZ8fhfBWWLhwzP6Tdfvy8Jd5Y-8xVqeA5sgni4_)
+    webhook: estafette.secret(fI3-FVVuCISewUB7.us1witAljV1RkjZ23G17KVLzBBzfwT0mJ24ORfjAFs7aJElUy9iQ_9nvO5CQnBG8WgT5YQ5l4N6c3vLZTc3zKDZ8fhfBWWLhwzP6Tdfvy8Jd5Y-8xVqeA5sgni4_)
     name: ${ESTAFETTE_LABEL_APP}
     channels:
     - '#build-status'
