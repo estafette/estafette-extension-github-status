@@ -54,4 +54,5 @@ pipelines:
     channels:
     - '#build-status'
     when:
-      status == 'failed'
+      status == 'failed' ||
+      status == 'succeeded'
