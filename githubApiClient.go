@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sethgrid/pester"
@@ -50,8 +51,18 @@ func (gh *githubAPIClientImpl) SetBuildStatus(accessToken, repoFullname, gitRevi
 		state = "pending"
 	}
 
+	logsURL := fmt.Sprintf(
+		"%vlogs/%v/%v/%v/%v",
+		os.Getenv("ESTAFETTE_CI_SERVER_BASE_URL"),
+		os.Getenv("ESTAFETTE_GIT_SOURCE"),
+		os.Getenv("ESTAFETTE_GIT_NAME"),
+		os.Getenv("ESTAFETTE_GIT_BRANCH"),
+		os.Getenv("ESTAFETTE_GIT_REVISION"),
+	)
+
 	params := buildStatusRequestBody{
-		State: state,
+		State:     state,
+		TargetURL: logsURL,
 	}
 
 	_, err = callGithubAPI("POST", fmt.Sprintf("https://api.github.com/repos/%v/statuses/%v", repoFullname, gitRevision), params, "token", accessToken)
