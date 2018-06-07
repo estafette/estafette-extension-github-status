@@ -19,6 +19,7 @@ pipelines:
     image: extensions/github-status:stable
     status: pending
     when:
+      status == 'succeeded' &&
       server == 'estafette'
 
   build:
