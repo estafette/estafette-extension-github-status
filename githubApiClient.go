@@ -112,11 +112,11 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 	var b interface{}
 	err = json.Unmarshal(body, &b)
 	if err != nil {
-		log.Printf("Deserializing response for '%v' Github api call failed: %v", url, err)
+		log.Printf("Deserializing response for '%v' Github api call failed. Body: %v. Error: %v", url, string(body), err)
 		return
 	}
 
-	log.Printf("Received response for '%v' Github api call: %v", url, body)
+	log.Printf("Received successful response for '%v' Github api call", url)
 
 	return
 }
