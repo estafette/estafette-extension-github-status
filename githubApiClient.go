@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
-	"github.com/rs/zerolog/log"
 	"github.com/sethgrid/pester"
 )
 
@@ -112,26 +112,11 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 	var b interface{}
 	err = json.Unmarshal(body, &b)
 	if err != nil {
-		log.Error().Err(err).
-			Str("url", url).
-			Str("requestMethod", method).
-			Interface("requestBody", params).
-			Interface("requestHeaders", request.Header).
-			Interface("responseHeaders", response.Header).
-			Str("responseBody", string(body)).
-			Msg("Deserializing response for '%v' Github api call failed")
-
+		log.Printf("Deserializing response for '%v' Github api call failed: %v", url, err)
 		return
 	}
 
-	log.Debug().
-		Str("url", url).
-		Str("requestMethod", method).
-		Interface("requestBody", params).
-		Interface("requestHeaders", request.Header).
-		Interface("responseHeaders", response.Header).
-		Interface("responseBody", b).
-		Msgf("Received response for '%v' Github api call...", url)
+	log.Printf("Received response for '%v' Github api call...", url)
 
 	return
 }

@@ -1,14 +1,11 @@
 package main
 
 import (
-	stdlog "log"
+	"log"
 	"os"
 	"runtime"
 
 	"github.com/alecthomas/kingpin"
-
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -33,21 +30,12 @@ func main() {
 	// parse command line parameters
 	kingpin.Parse()
 
-	// pretty print to make build logs more readable
-	log.Logger = zerolog.New(os.Stdout).With().
-		Logger()
-
-	// use zerolog for any logs sent via standard log library
-	stdlog.SetFlags(0)
-	stdlog.SetOutput(log.Logger)
+	// log to stdout and hide timestamp
+	log.SetOutput(os.Stdout)
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	// log startup message
-	log.Info().
-		Str("branch", branch).
-		Str("revision", revision).
-		Str("buildDate", buildDate).
-		Str("goVersion", goVersion).
-		Msg("Starting estafette-extension-github-status...")
+	log.Printf("Starting estafette-extension-github-status version %v...", version)
 
 	// check if there's a status override
 	status := *estafetteBuildStatus
@@ -59,9 +47,8 @@ func main() {
 	githubAPIClient := newGithubAPIClient()
 	err := githubAPIClient.SetBuildStatus(*githubAPIAccessToken, *gitRepoFullname, *gitRevision, status)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Updating Github build status failed")
+		log.Fatalf("Updating Github build status failed: %v", err)
 	}
 
-	log.Info().
-		Msg("Finished estafette-extension-github-status...")
+	log.Println("Finished estafette-extension-github-status...")
 }

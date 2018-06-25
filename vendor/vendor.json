@@ -41,26 +41,6 @@
 			"revisionTime": "2016-01-10T10:55:54Z"
 		},
 		{
-			"checksumSHA1": "A/ZKI1R1PdXY/5Yc1md7K566CO0=",
-			"path": "github.com/rs/zerolog",
-			"revision": "46339da83a8e0a8aa7a0341950df866c8bbf26e8",
-			"revisionTime": "2017-08-12T23:16:31Z"
-		},
-		{
-			"checksumSHA1": "VKcpzcAOV61yG2Vo1IUFs2v8LQ4=",
-			"path": "github.com/rs/zerolog/internal/json",
-			"revision": "46339da83a8e0a8aa7a0341950df866c8bbf26e8",
-			"revisionTime": "2017-08-12T23:16:31Z"
-		},
-		{
-			"checksumSHA1": "K8FG94sTTJSJJKmRsem1LuRwlGQ=",
-			"path": "github.com/rs/zerolog/log",
-			"revision": "2ed2f2c974489526d10329dae76d0f175684109a",
-			"revisionTime": "2017-08-06T03:45:41Z",
-			"version": "v1.2.2",
-			"versionExact": "v1.2.2"
-		},
-		{
 			"checksumSHA1": "Is47yO7d/2JPk+exbSEDwXTJsgo=",
 			"path": "github.com/sethgrid/pester",
 			"revision": "a86a2d88f4dc3c7dbf3a6a6bbbfb095690b834b6",
