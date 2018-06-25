@@ -116,7 +116,7 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 		return
 	}
 
-	log.Printf("Received response for '%v' Github api call...", url)
+	log.Printf("Received response for '%v' Github api call: %v", url, body)
 
 	return
 }
