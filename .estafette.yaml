@@ -45,12 +45,8 @@ stages:
     commands:
     - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
     - docker push extensions/github-status:${ESTAFETTE_BUILD_VERSION}
-    - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:dev
+    - docker tag extensions/:${ESTAFETTE_BUILD_VERSION} extensions/github-status:dev
     - docker push extensions/github-status:dev
-    when:
-      status == 'succeeded' &&
-      branch == 'master' &&
-      server == 'gocd'
 
   set-build-status:
     image: extensions/github-status:stable
@@ -67,6 +63,30 @@ stages:
       status == 'failed'
 
 releases:
-  dev:
   beta:
+    tag-container-image:
+      image: docker:18.03.1-ce
+      env:
+        DOCKER_HUB_USERNAME: estafette.secret(_0ev7h12O3XFhlhU.Rj3txIB6mwkf0C20nXsvI23w_g_Dw-v8Ug==)
+        DOCKER_HUB_PASSWORD: estafette.secret(3hHwj9FPPLwpdv2d.fp8NYuy1IbCR7MJvT4OeRhYgkDa8BnrkJSSdbA6Cn2gkr6kh)
+        TARGET_TAG: beta
+      commands:
+      - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
+      - docker pull extensions/github-status:${ESTAFETTE_BUILD_VERSION}
+      - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:${TARGET_TAG}
+      - docker push extensions/github-status:${TARGET_TAG}
+
   stable:
+    tag-container-image:
+      image: docker:18.03.1-ce
+      env:
+        DOCKER_HUB_USERNAME: estafette.secret(_0ev7h12O3XFhlhU.Rj3txIB6mwkf0C20nXsvI23w_g_Dw-v8Ug==)
+        DOCKER_HUB_PASSWORD: estafette.secret(3hHwj9FPPLwpdv2d.fp8NYuy1IbCR7MJvT4OeRhYgkDa8BnrkJSSdbA6Cn2gkr6kh)
+        TARGET_TAG: stable
+      commands:
+      - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
+      - docker pull extensions/github-status:${ESTAFETTE_BUILD_VERSION}
+      - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:${TARGET_TAG}
+      - docker push extensions/github-status:${TARGET_TAG}
+      - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:latest
+      - docker push extensions/github-status:latest
