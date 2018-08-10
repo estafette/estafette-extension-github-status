@@ -45,7 +45,7 @@ stages:
     commands:
     - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
     - docker push extensions/github-status:${ESTAFETTE_BUILD_VERSION}
-    - docker tag extensions/:${ESTAFETTE_BUILD_VERSION} extensions/github-status:dev
+    - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:dev
     - docker push extensions/github-status:dev
 
   set-build-status:
