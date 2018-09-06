@@ -16,13 +16,6 @@ version:
     releaseBranch: master
 
 stages:
-  set-pending-build-status:
-    image: extensions/github-status:stable
-    status: pending
-    when:
-      status == 'succeeded' &&
-      server == 'estafette'
-
   build:
     image: golang:1.10.2-alpine3.7
     workDir: /go/src/github.com/estafette/${ESTAFETTE_LABEL_APP}
@@ -31,27 +24,23 @@ stages:
     - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-X main.version=${ESTAFETTE_BUILD_VERSION} -X main.revision=${ESTAFETTE_GIT_REVISION} -X main.branch=${ESTAFETTE_GIT_BRANCH} -X main.buildDate=${ESTAFETTE_BUILD_DATETIME}" -o ./publish/${ESTAFETTE_LABEL_APP} .
 
   bake:
-    image: docker:18.03.1-ce
-    commands:
-    - cp Dockerfile ./publish
-    - cp /etc/ssl/certs/ca-certificates.crt ./publish
-    - docker build -t extensions/github-status:${ESTAFETTE_BUILD_VERSION} ./publish
+    image: extensions/docker:dev
+    action: build
+    container: github-status
+    repositories:
+    - extensions
+    path: ./publish
+    copy:
+    - Dockerfile
 
   push-to-docker-hub:
-    image: docker:18.03.1-ce
-    env:
-      DOCKER_HUB_USERNAME: estafette.secret(qJ47izXp9HOG6Ji8.bUXHmliWtLdWr1Em7luYZCPSWkhxBLU0hA==)
-      DOCKER_HUB_PASSWORD: estafette.secret(pC7nv0PIifl3aaa3.iFdRuGLbmc8LIN45Id8TKFLUr-QiMLesPkVKJgRVybA8q8or)
-    commands:
-    - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
-    - docker push extensions/github-status:${ESTAFETTE_BUILD_VERSION}
-    - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:dev
-    - docker push extensions/github-status:dev
-
-  set-build-status:
-    image: extensions/github-status:stable
-    when:
-      server == 'estafette'
+    image: extensions/docker:dev
+    action: push
+    container: github-status
+    repositories:
+    - extensions
+    tags:
+    - dev
 
   slack-notify:
     image: extensions/slack-build-status:dev
@@ -64,29 +53,24 @@ stages:
 
 releases:
   beta:
-    tag-container-image:
-      image: docker:18.03.1-ce
-      env:
-        DOCKER_HUB_USERNAME: estafette.secret(_0ev7h12O3XFhlhU.Rj3txIB6mwkf0C20nXsvI23w_g_Dw-v8Ug==)
-        DOCKER_HUB_PASSWORD: estafette.secret(3hHwj9FPPLwpdv2d.fp8NYuy1IbCR7MJvT4OeRhYgkDa8BnrkJSSdbA6Cn2gkr6kh)
-        TARGET_TAG: beta
-      commands:
-      - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
-      - docker pull extensions/github-status:${ESTAFETTE_BUILD_VERSION}
-      - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:${TARGET_TAG}
-      - docker push extensions/github-status:${TARGET_TAG}
+    stages:
+      tag-container-image:
+        image: extensions/docker:dev
+        action: tag
+        container: github-status
+        repositories:
+        - extensions
+        tags:
+        - beta
 
   stable:
-    tag-container-image:
-      image: docker:18.03.1-ce
-      env:
-        DOCKER_HUB_USERNAME: estafette.secret(_0ev7h12O3XFhlhU.Rj3txIB6mwkf0C20nXsvI23w_g_Dw-v8Ug==)
-        DOCKER_HUB_PASSWORD: estafette.secret(3hHwj9FPPLwpdv2d.fp8NYuy1IbCR7MJvT4OeRhYgkDa8BnrkJSSdbA6Cn2gkr6kh)
-        TARGET_TAG: stable
-      commands:
-      - docker login --username=${DOCKER_HUB_USERNAME} --password="${DOCKER_HUB_PASSWORD}"
-      - docker pull extensions/github-status:${ESTAFETTE_BUILD_VERSION}
-      - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:${TARGET_TAG}
-      - docker push extensions/github-status:${TARGET_TAG}
-      - docker tag extensions/github-status:${ESTAFETTE_BUILD_VERSION} extensions/github-status:latest
-      - docker push extensions/github-status:latest
+    stages:
+      tag-container-image:
+        image: extensions/docker:dev
+        action: tag
+        container: github-status
+        repositories:
+        - extensions
+        tags:
+        - stable
+        - latest
