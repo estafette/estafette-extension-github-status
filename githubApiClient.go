@@ -63,6 +63,8 @@ func (gh *githubAPIClientImpl) SetBuildStatus(accessToken, repoFullname, gitRevi
 		TargetURL: logsURL,
 	}
 
+	log.Printf("Setting logs url %v", params.TargetURL)
+
 	_, err = callGithubAPI("POST", fmt.Sprintf("https://api.github.com/repos/%v/statuses/%v", repoFullname, gitRevision), params, "token", accessToken)
 
 	return
@@ -115,7 +117,7 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 		return
 	}
 
-	log.Printf("Received successful response for '%v' Github api call", url)
+	log.Printf("Received successful response for '%v' Github api call with status code %v", url, response.StatusCode)
 
 	return
 }
