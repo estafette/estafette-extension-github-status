@@ -52,7 +52,7 @@ func (gh *githubAPIClientImpl) SetBuildStatus(accessToken, repoFullname, gitRevi
 
 	logsURL := fmt.Sprintf(
 		"%vpipelines/%v/%v/builds/%v/logs",
-		*estafetteBuildID,
+		*ciBaseURL,
 		*gitRepoSource,
 		repoFullname,
 		*estafetteBuildID,
