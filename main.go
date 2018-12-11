@@ -59,7 +59,7 @@ func main() {
 
 	// set build status
 	githubAPIClient := newGithubAPIClient()
-	err := githubAPIClient.SetBuildStatus(credentials[0].AdditionalProperties.Token, *gitRepoFullname, *gitRevision, status)
+	err = githubAPIClient.SetBuildStatus(credentials[0].AdditionalProperties.Token, *gitRepoFullname, *gitRevision, status)
 	if err != nil {
 		log.Fatalf("Updating Github build status failed: %v", err)
 	}
