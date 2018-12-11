@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"runtime"
@@ -18,7 +19,7 @@ var (
 
 var (
 	// flags
-	githubAPIAccessToken = kingpin.Flag("github-api-token", "The time-limited access token to access the Github api.").Envar("ESTAFETTE_GITHUB_API_TOKEN").Required().String()
+	apiTokenJSON         = kingpin.Flag("credentials", "Github api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_GITHUB_API_TOKEN").Required().String()
 	gitRepoSource        = kingpin.Flag("git-repo-source", "The source of the git repository, github.com in this case.").Envar("ESTAFETTE_GIT_SOURCE").Required().String()
 	gitRepoFullname      = kingpin.Flag("git-repo-fullname", "The owner and repo name of the Github repository.").Envar("ESTAFETTE_GIT_FULLNAME").Required().String()
 	gitRevision          = kingpin.Flag("git-revision", "The hash of the revision to set build status for.").Envar("ESTAFETTE_GIT_REVISION").Required().String()
@@ -46,9 +47,19 @@ func main() {
 		status = *statusOverride
 	}
 
+	// get api token from injected credentials
+	var credentials []APITokenCredentials
+	err := json.Unmarshal([]byte(*apiTokenJSON), &credentials)
+	if err != nil {
+		log.Fatal("Failed unmarshalling injected credentials: ", err)
+	}
+	if len(credentials) == 0 {
+		log.Fatal("No credentials have been injected")
+	}
+
 	// set build status
 	githubAPIClient := newGithubAPIClient()
-	err := githubAPIClient.SetBuildStatus(*githubAPIAccessToken, *gitRepoFullname, *gitRevision, status)
+	err := githubAPIClient.SetBuildStatus(credentials[0].AdditionalProperties.Token, *gitRepoFullname, *gitRevision, status)
 	if err != nil {
 		log.Fatalf("Updating Github build status failed: %v", err)
 	}
