@@ -62,7 +62,7 @@ releases:
   dev:
     triggers:
     - pipeline:
-        name: github.com/estafette/estafette-extension-github-status
+        name: self
         branch: .+
     stages:
       tag-container-image:
