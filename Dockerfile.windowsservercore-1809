@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/windows/servercore:1809
+
+COPY estafette-extension-github-status.exe c:/estafette-extension-github-status.exe
+
+ENTRYPOINT ["C:/estafette-extension-github-status.exe"]
