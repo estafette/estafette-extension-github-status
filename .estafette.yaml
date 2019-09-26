@@ -83,15 +83,15 @@ releases:
         dockerfile: Dockerfile.windowsservercore-1809
         path: ./publish
 
-      # push-to-docker-hub:
-      #   image: extensions/docker:windowsservercore-1809
-      #   action: push
-      #   container: github-status
-      #   repositories:
-      #   - extensions
-      #   tags:
-      #   - windowsservercore-1809
-      #   pushVersionTag: false
+      push-to-docker-hub:
+        image: extensions/docker:windowsservercore-1809
+        action: push
+        container: github-status
+        repositories:
+        - extensions
+        tags:
+        - windowsservercore-1809
+        pushVersionTag: false
 
   dev:
     triggers:
