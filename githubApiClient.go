@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 
+	"github.com/rs/zerolog/log"
 	"github.com/sethgrid/pester"
 )
 
@@ -63,7 +63,7 @@ func (gh *githubAPIClientImpl) SetBuildStatus(accessToken, repoFullname, gitRevi
 		TargetURL: logsURL,
 	}
 
-	log.Printf("Setting logs url %v", params.TargetURL)
+	log.Info().Msgf("Setting logs url %v", params.TargetURL)
 
 	_, err = callGithubAPI("POST", fmt.Sprintf("https://api.github.com/repos/%v/statuses/%v", repoFullname, gitRevision), params, "token", accessToken)
 
@@ -113,11 +113,11 @@ func callGithubAPI(method, url string, params interface{}, authorizationType, to
 	var b interface{}
 	err = json.Unmarshal(body, &b)
 	if err != nil {
-		log.Printf("Deserializing response for '%v' Github api call failed. Body: %v. Error: %v", url, string(body), err)
+		log.Info().Err(err).Str("body", string(body)).Msgf("Deserializing response for '%v' Github api call failed", url)
 		return
 	}
 
-	log.Printf("Received successful response for '%v' Github api call with status code %v", url, response.StatusCode)
+	log.Info().Msgf("Received successful response for '%v' Github api call with status code %v", url, response.StatusCode)
 
 	return
 }

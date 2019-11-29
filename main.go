@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"runtime"
 
 	"github.com/alecthomas/kingpin"
 	foundation "github.com/estafette/estafette-foundation"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -49,18 +49,18 @@ func main() {
 	var credentials []APITokenCredentials
 	err := json.Unmarshal([]byte(*apiTokenJSON), &credentials)
 	if err != nil {
-		log.Fatal("Failed unmarshalling injected credentials: ", err)
+		log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
 	}
 	if len(credentials) == 0 {
-		log.Fatal("No credentials have been injected")
+		log.Fatal().Msg("No credentials have been injected")
 	}
 
 	// set build status
 	githubAPIClient := newGithubAPIClient()
 	err = githubAPIClient.SetBuildStatus(credentials[0].AdditionalProperties.Token, *gitRepoFullname, *gitRevision, status)
 	if err != nil {
-		log.Fatalf("Updating Github build status failed: %v", err)
+		log.Fatal().Err(err).Msg("Updating Github build status failed")
 	}
 
-	log.Println("Finished estafette-extension-github-status...")
+	log.Info().Msg("Finished estafette-extension-github-status...")
 }
