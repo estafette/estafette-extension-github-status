@@ -30,7 +30,6 @@ var (
 	ciBaseURL            = kingpin.Flag("estafette-ci-server-base-url", "The base url of the ci server.").Envar("ESTAFETTE_CI_SERVER_BASE_URL").Required().String()
 	estafetteBuildID     = kingpin.Flag("estafette-build-id", "The build id of this particular build.").Envar("ESTAFETTE_BUILD_ID").Required().String()
 
-	apiTokenJSON = kingpin.Flag("credentials", "Github api token credentials configured at the CI server, passed in to this trusted extension.").Envar("ESTAFETTE_CREDENTIALS_GITHUB_API_TOKEN").String()
 	apiTokenPath = kingpin.Flag("credentials-path", "Path to file with Github api token credentials configured at the CI server, passed in to this trusted extension.").Default("/credentials/github_api_token.json").String()
 )
 
@@ -68,11 +67,6 @@ func main() {
 			log.Warn().Str("data", string(credentialsFileContent)).Msgf("Found 0 credentials in file %v", *apiTokenPath)
 		}
 		log.Debug().Msgf("Read %v credentials", len(credentials))
-	} else {
-		err := json.Unmarshal([]byte(*apiTokenJSON), &credentials)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Failed unmarshalling injected credentials")
-		}
 	}
 	if len(credentials) == 0 {
 		log.Fatal().Msg("No credentials have been injected")
