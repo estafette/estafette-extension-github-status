@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/windows/nanoserver:1809
+
+COPY estafette-extension-github-status.exe c:/estafette-extension-github-status.exe
+
+ENV ESTAFETTE_LOG_FORMAT="console"
+
+USER ContainerAdministrator
+
+ENTRYPOINT ["C:/estafette-extension-github-status.exe"]
