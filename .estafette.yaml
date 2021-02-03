@@ -98,7 +98,7 @@ releases:
         container: github-status
         repositories:
         - extensions
-        dockerfile: Dockerfile.windowsservercore-ltsc2019
+        dockerfile: Dockerfile.nanoserver-1809
         path: ./publish
 
       push-to-docker-hub:
@@ -108,7 +108,7 @@ releases:
         repositories:
         - extensions
         tags:
-        - windowsservercore-ltsc2019
+        - nanoserver-1809
         pushVersionTag: false
 
   dev:
