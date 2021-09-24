@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"runtime"
+	"strings"
 
 	"github.com/alecthomas/kingpin"
 	foundation "github.com/estafette/estafette-foundation"
@@ -45,6 +46,11 @@ func main() {
 	status := *estafetteBuildStatus
 	if *statusOverride != "" {
 		status = *statusOverride
+	}
+
+	// make sure ciBaseURL ends with a slash
+	if !strings.HasSuffix(*ciBaseURL, "/") {
+		*ciBaseURL = *ciBaseURL + "/"
 	}
 
 	// get api token from injected credentials
